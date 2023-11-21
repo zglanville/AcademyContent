@@ -1,0 +1,13 @@
+{"visibility": 15,
+"reload": 5,
+"repair": 5,
+"mine": 7,
+"shield": 5,
+"shots": 5,
+"port": 5000,
+"world": {
+  "height": 1,
+  "width": 1
+  }
+}
+

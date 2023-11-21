@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{/layout.html}">
+<head></head>
+<body>
+
+<div layout:fragment="contents">
+    <h1>My expenses</h1>
+    <a id="add_expense" href="/newexpense">Add a new expense</a>
+
+    <section>
+        <!-- Table for All expenses -->
+        <div th:if="${#lists.isEmpty(expenses)}">
+            <p id="no_expenses">You don't have any expenses!</p>
+        </div>
+        <div th:unless="${#lists.isEmpty(expenses)}">
+            <table id="expenses">
+                <thead>
+                <tr style="text-align: left;">
+                    <th>When</th>
+                    <th>What</th>
+                    <th class="money">How much</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="expense : ${expenses}">
+                    <td th:id="${#ids.seq('date_')}"  th:text="${expense.date}"></td>
+                    <td>
+                        <a th:id="${#ids.seq('claim_expense_')}"th:text="${expense.description}" th:href="@{'/claimexpense?expenseId=' + ${expense.getId()}}"></a>
+                    </td>
+                    <td class="money" th:id="${#ids.seq('amount_')}"><span th:text="${#numbers.formatDecimal(expense.getNettAmount, 0, 'COMMA', 2, 'POINT')}">number</span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="total" id="expenses_total" th:text="${#numbers.formatDecimal(totalExpenses, 0, 'COMMA', 2, 'POINT')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section>
+        <h1>People that owe me</h1>
+        <div th:if="${#lists.isEmpty(debtorExpenses)}">
+            <p id="nobody_owes">Nobody owes you any money!</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(debtorExpenses)}">
+            <table id="they_owe_me">
+                <thead>
+                <tr style="text-align: left;">
+                    <th>Who</th>
+                    <th>What</th>
+                    <th>Due</th>
+                    <th>How much</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="expense : ${debtorExpenses}">
+                    <td th:text="${expense.claimedFrom.getName()}"></td>
+                    <td th:text="${expense.description}"></td>
+                    <td th:text="${expense.dueDate}"></td>
+                    <td th:id="${#ids.seq('amount_')}"><span th:text="${#numbers.formatDecimal(expense.amount, 0, 'COMMA', 2, 'POINT')}">number</span></td>
+                </tr>
+                <tr>
+                    <td colspan="3"></td>
+                    <td class="total" id="they_owe_me_total" th:text="${#numbers.formatDecimal(totalDebtorExpense, 0, 'COMMA', 2, 'POINT')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Table section for Money owed to others -->
+    <section>
+        <h1>People I owe</h1>
+        <div th:if="${#lists.isEmpty(creditorExpenses)}">
+            <p id="owe_nobody">You don't owe anyone!</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(creditorExpenses)}">
+            <table id="i_owe_them">
+                <thead>
+                <tr style="text-align: left;">
+                    <th>Who</th>
+                    <th>What</th>
+                    <th>Due</th>
+                    <th>How much</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="expense : ${creditorExpenses}">
+                    <td th:text="${expense.claimedBy.getName()}"></td>
+                    <td>
+                        <a th:id="${#ids.seq('settle_')}" th:text="${expense.description}" th:href="@{'/settleclaim?claimId=' + ${expense.getId()}}"></a>
+                    </td>
+                    <td th:text="${expense.dueDate}"></td>
+                    <td th:id="${#ids.seq('amount_')}" th:text="${#numbers.formatDecimal(expense.amount, 0, 'COMMA', 2, 'POINT')}"></td>
+                </tr>
+                <tr>
+                    <td colspan="3"></td>
+                    <td class="total" id="i_owe_them_total" th:text="${#numbers.formatDecimal(totalCreditorExpense, 0, 'COMMA', 2, 'POINT')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section class="nettExpenses">
+        <p id="nett_expenses" th:text="${#numbers.formatDecimal(nettExpenses, 0, 'COMMA', 2, 'POINT')}"></p>
+    </section>
+
+</div>
+</body>
+
+</html>

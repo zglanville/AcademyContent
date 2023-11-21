@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{/layout.html}">
+<head>
+</head>
+<body>
+<div layout:fragment="contents" style="width: 2000px">
+
+    <h1>Submit a claim for the following expense</h1>
+    <div>
+        <table id="expenses">
+            <tbody>
+            <tr>
+                <td th:id="expense_date"  th:text="${date}"></td>
+                <td th:id="expense_description" th:text="${description}"></td>
+                <td th:id="expense_amount" th:text="${#numbers.formatDecimal(expenseAmount, 0, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${hasClaims == true}" id="claims_section" style="block">
+        <h2>Previous claims for this expense</h2>
+        <table id="claims">
+            <thead>
+            <tr>
+                <td><h3>Who</h3></td>
+                <td><h3>Due</h3></td>
+                <td><h3>Settled?</h3></td>
+                <td><h3><span>How much</span></h3></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="claim : ${claims}">
+                <td th:id="${#ids.seq('claim_who_')}" th:text="${claim.claimedFrom.getName()}"></td>
+                <td th:id="${#ids.seq('claim_date_')}"  th:text="${claim.dueDate}"></td>
+                <td th:if="${claim.settled == false}" th:id="${#ids.seq('claim_settled_')}"th:text="No">
+                </td>
+                <td th:unless="${claim.settled == false}" th:id="${#ids.seq('claim_settled_')}"th:text="Yes">
+                </td>
+                <td class="money" th:id="${#ids.seq('claim_amount_')}"><span th:text="${#numbers.formatDecimal(claim.amount, 0, 'COMMA', 2, 'POINT')}">number</span></td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td class="total" id="total_claims" th:text="${#numbers.formatDecimal(totalClaims, 0, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td>The amount that has not been claimed</td>
+                <td class="total" id="unclaimed_amount" th:text="${#numbers.formatDecimal(unclaimedAmount, 0, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div th:unless="${hasExpenses == false}">
+        <p></p>
+    </div>
+
+    <form method="post">
+
+
+        <label for="email">The email address of the person who should pay you</label>
+        <input id="email" name="email" type="text">
+
+        <label for="claim_amount">The amount they should pay</label>
+        <input id="claim_amount" name="claim_amount" type="number">
+
+        <label for="due_date">By when should this claim be settled</label>
+        <input id="due_date" name="due_date" type="text">
+
+        <button type="add_claim" onclick="updatePage(${totalClaims}, ${email}, ${due_date}, ${claim_amount})" id="add_claim">
+            Add Claim
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>

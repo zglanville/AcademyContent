@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{/layout.html}">
+<head></head>
+<body>
+<div layout:fragment="contents">
+    <h2 th:if="${session.by} == 'expense'">Ratings by expense</h2>
+    <h2 th:if="${session.by} == 'claims'">Ratings by claims</h2>
+    <h2 th:if="${session.by} == 'settled'">Ratings by settled claims</h2>
+    <h2 th:if="${session.by} == 'unsettled'">Ratings by unsettled claims</h2>
+
+    <table id="ratings" th:unless="${#lists.isEmpty(ratings)}">
+        <thead>
+        <tr>
+            <th>Who</th>
+            <th>Last updated</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="rating: ${ratings}">
+            <tr>
+                <td th:text="${rating.email}">blahblah@student.wethinkcode.co.za</td>
+                <td th:text="${rating.timestamp}">2021/10/21</td>
+                <td th:text="${#numbers.formatDecimal(rating.amount,1,2,'POINT')}">200.00</td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

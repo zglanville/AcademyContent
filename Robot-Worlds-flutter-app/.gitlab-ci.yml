@@ -1,0 +1,56 @@
+# # This file is a template, and might need editing before it works on your project.
+# # To contribute improvements to CI/CD templates, please follow the Development guide at:
+# # https://docs.gitlab.com/ee/development/cicd/templates.html
+# stages:
+#   - build
+#   - test
+
+# build-image:
+#   image: docker:20.10
+#   stage: build
+#   before_script:
+#     - echo -n $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin gitlab.wethinkco.de:5050
+#   script:
+#     - docker build -t "$CI_REGISTRY_IMAGE:latest" .
+#     - docker push "$CI_REGISTRY_IMAGE:latest"
+
+
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+
+# This is a sample GitLab CI/CD configuration file that should run without any modifications.
+# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
+# it uses echo commands to simulate the pipeline execution.
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+#
+# For more information, see: https://docs.gitlab.com/ee/ci/yaml/README.html#stages
+
+image: maven:3.6.3-jdk-11
+
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    # build docker
+    # - make docker_build
+    # - mvn build
+    - mvn clean
+    - mvn verify -Dmaven.test.skip
+    # - mvn compile
+    - mvn package -Dmaven.test.skip
+
+test:
+  stage: test
+  script:
+    - mvn test -Dtest=PositionTest,SquareObstacleTest,ObstacleTest
+
+    
+# run make clean will delete all target directories subdirectories.
+# run mvn verify will take the pom.xml file as input and resolve all dependencies by downloading the necessary JAR files.
+# run mvn compile will take all source code and dependent JARs and compile the code into class files in the target directories.
+# run make unit-test
